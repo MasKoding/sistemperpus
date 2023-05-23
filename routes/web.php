@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\ExecutiveController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UserController;
@@ -28,11 +29,15 @@ Route::post('proses_login',[AuthController::class,'proses_login'])
 ->name('proses_login');
 Route::post('proses_register',[AuthController::class,'proses_register'])
 ->name('proses_register');
-Route::get('logout',[AuthController::class,'logout'])->name('logout');
+Route::post('logout',[AuthController::class,'logout'])->name('logout');
 // group
 Route::group(['middleware' => ['auth']], function () {
-    Route::group(['middleware' => ['cek_login:admin']], function () {
-        Route::resource('admin', AdminController::class);
+    Route::group(['prefix'=>'admin','middleware' => ['cek_login:admin']], function () {
+        // Route::resource('admin', AdminController::class);
+        Route::get('/',[AdminController::class,'index']);
+
+        Route::get('/books',[BookController::class,'index'])->name('book.index');
+
     });
     Route::group(['middleware' => ['cek_login:user']], function () {
         Route::resource('user', UserController::class);
